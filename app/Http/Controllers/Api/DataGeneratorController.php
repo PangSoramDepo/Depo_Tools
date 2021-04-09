@@ -12,7 +12,7 @@ class DataGeneratorController extends Controller
     {
         $startFrom = request('startFrom');
         $inserts = [];
-        for($i=$startFrom; $i< $startFrom + 1000; $i++) {
+        for($i=$startFrom; $i< $startFrom + 10000; $i++) {
             array_push($inserts,array(
                 'username'  => 85519000000 + $i,
                 'password'  => 'tsungloadtest',
