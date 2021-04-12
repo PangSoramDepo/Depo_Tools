@@ -23,3 +23,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/generate/{startFrom}', [DataGeneratorController::class, 'data']);
 Route::get('/count', [DataGeneratorController::class, 'count']);
 Route::get('/last', [DataGeneratorController::class, 'last']);
+Route::get('/ngork-data', [DataGeneratorController::class, 'ngork_data']);
