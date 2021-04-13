@@ -43,11 +43,27 @@ class DataGeneratorController extends Controller
 
         // CONVERT DATA FROM CSV TO ARRAY
         $customerArr = $this->csvToArray($file);
+        $phoneNumbers = array();
+        $noneExist = array();
+
+        foreach ($customerArr as $item ) {
+            array_push($phoneNumbers, $item['MSISDN']);
+        }
+
+        // GET EXIST USERNAME RECORDS
+        $existRecord = Euser::whereIn('username', $phoneNumbers)->get()->map->username->toArray();
+
+        // FILTER OUT THE EXISTING RECORD
+        foreach ($phoneNumbers as $item ) {
+            if(!in_array($item, $existRecord)) {
+                array_push($noneExist, $item);
+            }
+        }
 
         // SUBMIT DATA TO API
-        for ($i=0; $i < count($customerArr); $i++) {
+        for ($i=0; $i < count($noneExist); $i++) {
             $response = $client->request('POST', 'http://10.10.12.10:8080/api/v1/register',[
-                'json' => ["mobileNumber" => $customerArr[$i]['MSISDN']]
+                'json' => ["mobileNumber" => $noneExist[$i]]
             ]);
         }
 
