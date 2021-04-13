@@ -45,7 +45,9 @@ class DataGeneratorController extends Controller
         $customerArr = $this->csvToArray($file);
         $phoneNumbers = array();
         $noneExist = array();
+        $dbRecordBefore = Euser::count();
 
+        // MAP KEY VALUE FROM ARRAY
         foreach ($customerArr as $item ) {
             array_push($phoneNumbers, $item['MSISDN']);
         }
@@ -62,13 +64,27 @@ class DataGeneratorController extends Controller
 
         // SUBMIT DATA TO API
         for ($i=0; $i < count($noneExist); $i++) {
-            $response = $client->request('POST', 'http://10.10.12.10:8080/api/v1/register',[
+            $response = $client->request('POST', 'http://10.10.12.11:8080/api/v1/register',[
                 'json' => ["mobileNumber" => $noneExist[$i]]
             ]);
         }
 
+        // GET LAST DB COUNT AFTER OPERATION
+        $dbAfter = Euser::count();
+
+        // PREPARATION RESPONSE
+        $data = array(
+            "Author"    =>  "PangSoramDepo",
+            "existRecord"   =>  count($existRecord),
+            "noneExist" => count($noneExist),
+            "csvRecord" => count($phoneNumbers),
+            "dbBefore"  => $dbRecordBefore,
+            "dbAfter"   => $dbAfter,
+            "recordInsert"  => $noneExist
+        );
+
         // RETURN RESPONSE
-        return "Done";
+        return $data;
     }
 
     private function csvToArray($filename = '', $delimiter = ',')
